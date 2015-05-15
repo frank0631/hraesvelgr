@@ -1,0 +1,6 @@
+rootProject.name = 'Hraesvelgr'
+
+include 'Nidhogg'
+include 'Ratatoskr'
+include 'Huginn'
+include 'Muninn'

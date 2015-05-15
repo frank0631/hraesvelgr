@@ -1,0 +1,167 @@
+import groovy.json.*
+
+apply plugin: 'thrift'
+apply plugin: "com.eriwen.gradle.js"
+
+buildscript {
+    repositories {
+        mavenCentral()
+        jcenter()
+        maven {
+            url 'http://dl.bintray.com/esistegalaber/maven/'
+        }
+    }
+    dependencies {
+        classpath 'co.tomlee.gradle.plugins:gradle-thrift-plugin:0.0.6'
+        classpath "com.eriwen:gradle-js-plugin:1.12.1"
+        classpath 'com.eriwen:gradle-css-plugin:1.8.0'
+    }
+}
+
+task setBowerProperties() {
+    project.ext {
+        combineThriftJS = new File(project.buildDir, projectNameJsCase + '.js')
+        bowerFile = new File(project.buildDir, "bower.json")
+        bowerName = projectNameJsCase
+        bowerVersion = '0.0.5'
+        bowerMain = combineThriftJS.getName()
+        bowerPrivate = true
+    }
+}
+setProperties.finalizedBy(setBowerProperties)
+
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile 'org.apache.thrift:libthrift:0.9.2'
+    compile 'commons-lang:commons-lang:2.6'
+}
+
+generateThriftSource {
+    verbose false
+    debug false
+    strict false
+
+    path file('vendor/thrift')
+
+    generators {
+        java {
+            option 'hashcode'
+            option 'beans'
+            out project.genJavaDir
+        }
+        js {
+            option 'jquery'
+            out project.genJsDir
+        }
+    }
+}
+
+task cleanThriftZip(type: Delete) {
+    delete project.distDir
+}
+
+task cleanThriftGen(type: Delete) {
+    delete project.genJavaDir
+    delete project.genJsDir
+}
+
+task cleanCombinedJs(type: Delete) {
+    delete project.combineThriftJS
+}
+
+javascript.source {
+    dev {
+        js {
+            srcDir project.genJsDir
+            include "*.js"
+            exclude "*.min.js"
+        }
+    }
+    prod {
+        js {
+            srcDir project.genJsDir
+            include "*.min.js"
+        }
+    }
+}
+
+combineJs {
+    source project.genJsDir
+    dest project.combineThriftJS
+}
+
+task bowerInit <<{
+    def json = JsonOutput.toJson([
+            name: project.bowerName,
+            version : project.bowerVersion,
+            main : project.bowerMain,
+            private : project.bowerPrivate,
+            ignore : [".jshintrc","**/*.txt"]
+    ])
+    project.bowerFile.text = JsonOutput.prettyPrint(json);
+}
+
+task zipThrift(type: Zip, dependsOn: generateThriftSource) {
+    archiveName 'thriftModels.zip'
+    from project.srcThriftDir
+    include '**/*.thrift'
+    destinationDir project.distDir
+}
+task zipJava(type: Zip, dependsOn: generateThriftSource) {
+    archiveName 'thriftJava.zip'
+    from project.genJavaDir
+    include '**/*.java'
+    destinationDir project.distDir
+}
+task zipJs(type: Zip, dependsOn: generateThriftSource) {
+    archiveName 'thriftJs.zip'
+    from project.genJsDir
+    include '**/*.js'
+    destinationDir project.distDir
+}
+task zipBower(type: Zip, dependsOn: ['generateThriftSource','bowerInit']) {
+    archiveName 'bower'+project.name+'.zip'
+    from project.buildDir
+    include project.bowerFile.getName(), project.combineThriftJS.getName()
+    destinationDir project.distDir
+}
+
+//bowerInit.dependsOn(build)
+bowerInit.dependsOn(combineJs)
+bowerInit.finalizedBy(zipBower)
+
+build.dependsOn(generateThriftSource)
+//build.dependsOn(compileJava)
+
+dist.dependsOn(build)
+dist.dependsOn(bowerInit)
+
+build.finalizedBy(combineJs)
+build.finalizedBy(bowerInit)
+build.finalizedBy(zipThrift)
+build.finalizedBy(zipJava)
+build.finalizedBy(zipJs)
+build.finalizedBy(zipBower)
+
+clean.finalizedBy(cleanThriftZip)
+clean.finalizedBy(cleanThriftGen)
+clean.finalizedBy(cleanCombinedJs)
+
+//task printJavaFiletree(dependsOn:'generateThriftSource') << {
+//    println javaDir
+//    FileTree tree = fileTree(javaDir).include('**/*.java')
+//    tree.each {File file ->
+//        println file
+//    }
+//}
+//
+//task printJSFiletree(dependsOn:'generateThriftSource') << {
+//    FileTree tree = fileTree(jsDir).include('**/*.js')
+//    tree.each {File file ->
+//        println file
+//    }
+//}
