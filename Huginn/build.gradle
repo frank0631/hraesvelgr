@@ -44,6 +44,11 @@ dependencies {
     compile("com.h2database:h2")
     compile('org.hibernate:hibernate-core:4.3.9.Final')
     compile('org.hibernate:hibernate-entitymanager:4.3.9.Final')
+    compile('com.fasterxml.jackson.core:jackson-core:2.5.3')
+    compile('com.fasterxml.jackson.core:jackson-databind:2.5.3')
+    compile('org.codehaus.jackson:jackson-core-asl:1.9.13')
+    compile('org.codehaus.jackson:jackson-mapper-asl:1.9.13')
+
     //compile('org.hibernate:hibernate-core:5.0.0.Beta2')
 
     testCompile("junit:junit")

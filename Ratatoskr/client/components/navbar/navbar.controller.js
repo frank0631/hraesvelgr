@@ -5,7 +5,12 @@ angular.module('ratatoskrApp')
     $scope.menu = [{
       'title': 'Home',
       'link': '/'
-    }];
+    },
+      {
+        'title': 'Echo',
+        'link': '/Echo'
+      }
+    ];
 
     $scope.isCollapsed = true;
 

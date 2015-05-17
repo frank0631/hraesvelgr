@@ -35,6 +35,10 @@ project(':Nidhogg') {
             srcThriftDir = new File(project.projectDir, 'src/main/thrift')
             distDir = new File(project.projectDir, 'dist')
         }
+
+        idea.module.excludeDirs = []
+        idea.module.sourceDirs += project.srcThriftDir
+        idea.module.jdkName = '1.8'
     }
 
     task dist {}

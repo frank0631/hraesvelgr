@@ -1,27 +1,12 @@
 'use strict';
 
 angular.module('ratatoskrApp')
-  .controller('MainCtrl', function ($scope, $http, EchoClient, EchoClientREST, CalculatorClientREST) {
+  .controller('MainCtrl', function ($scope, $http, CalculatorClientREST) {
     $scope.awesomeThings = [];
 
     $http.get('/api/things').success(function(awesomeThings) {
       $scope.awesomeThings = awesomeThings;
     });
-
-    $scope.input = {text : "Hello World"};
-	  $scope.output = {text : ""};
-
-    //Basic Echo Form
-	  $scope.echo = function() {
-		  //EchoClient.echo($scope.input.text).then(function(message){
-		  EchoClientREST.echo({},{input:$scope.input.text}, function(message){
-			  $scope.output.text = message;
-        if(!$scope.$$phase) {
-            $scope.$apply();
-          }
-		  });
-		  }
-
 
 		//Calculator Formly
 		$scope.Calculator = {};
