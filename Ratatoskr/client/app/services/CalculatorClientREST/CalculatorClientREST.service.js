@@ -7,7 +7,7 @@ angular.module('ratatoskrApp')
       return $.param(obj);
     }
 
-    return $resource("http://localhost:9001/api/calculator",{}, {
+    return $resource("http://localhost:9001/api/calculator", {}, {
       calculate: {
         method: 'POST',
         headers: {'Content-Type': 'application/x-www-form-urlencoded'},

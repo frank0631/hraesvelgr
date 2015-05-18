@@ -9,9 +9,9 @@ angular.module('ratatoskrApp')
     $scope.EchoThriftVM.fields = EchoClientForm.fields();
     $scope.EchoThriftVM.submit = echoThrift;
 
-    function echoThrift(object,output) {
+    function echoThrift(object, output) {
       var inputString = $scope.EchoThriftVM.object.input;
-      EchoClientThrift.echo(inputString).then(function(outputString){
+      EchoClientThrift.echo(inputString).then(function (outputString) {
         $scope.EchoThriftVM.output = outputString;
       });
     }
@@ -24,7 +24,7 @@ angular.module('ratatoskrApp')
 
     function echoREST() {
       var inputString = $scope.EchoRESTVM.object;
-        EchoClientREST.echo(inputString, function(outputString){
+      EchoClientREST.echo(inputString, function (outputString) {
         $scope.EchoRESTVM.output = outputString.output;
       });
     }

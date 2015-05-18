@@ -11,7 +11,7 @@ angular.module('ratatoskrApp')
 
     function calculatorThrift() {
       var inputObject = $scope.CalculatorThriftVM.object;
-      CalculatorClientThrift.calculate(inputObject.num1,inputObject.num2,inputObject.op).then(function(outputOutput){
+      CalculatorClientThrift.calculate(inputObject.num1, inputObject.num2, inputObject.op).then(function (outputOutput) {
         $scope.CalculatorThriftVM.output = outputOutput;
       });
     }
@@ -24,7 +24,7 @@ angular.module('ratatoskrApp')
 
     function calculatorREST() {
       var inputObject = $scope.CalculatorRESTVM.object;
-      CalculatorClientREST.calculate(inputObject, function(outputObject){
+      CalculatorClientREST.calculate(inputObject, function (outputObject) {
         $scope.CalculatorRESTVM.output = outputObject.result;
       });
     }

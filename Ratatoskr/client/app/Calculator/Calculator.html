@@ -2,21 +2,23 @@
 
 <div class="container">
 
-<div class="row">
-  <div class="col-lg-6">
-    <h3>Calculator Thrift</h3>
-    <form ng-submit="CalculatorThriftVM.submit()">
-      <formly-form model="CalculatorThriftVM.object" fields="CalculatorThriftVM.fields">
-        <button type="submit">Calculate</button>
-      </formly-form>
-    </form>
-    Output: <label>{{CalculatorThriftVM.output}}</label>
+  <div class="row">
+    <div class="col-lg-6">
+      <h3>Calculator Thrift</h3>
+
+      <form ng-submit="CalculatorThriftVM.submit()">
+        <formly-form model="CalculatorThriftVM.object" fields="CalculatorThriftVM.fields">
+          <button type="submit">Calculate</button>
+        </formly-form>
+      </form>
+      Output: <label>{{CalculatorThriftVM.output}}</label>
+    </div>
   </div>
-</div>
   <hr/>
   <div class="row">
     <div class="col-lg-6">
       <h3>Calculator REST</h3>
+
       <form ng-submit="CalculatorRESTVM.submit()">
         <formly-form model="CalculatorRESTVM.object" fields="CalculatorRESTVM.fields">
           <button type="submit">Calculate</button>
