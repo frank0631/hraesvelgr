@@ -15,8 +15,19 @@ $fa-font-path: "/bower_components/font-awesome/fonts";
     padding: 0.2em 0;
 }
 
+body {
+  background: #222;
+  color: #ddd;
+}
+
+button {
+  background-color: #222;
+  color: #ddd;
+}
+
 // Component styles are injected through grunt
 // injector
+@import 'Calculator/Calculator.scss';
 @import 'Echo/Echo.scss';
 @import 'main/main.scss';
 @import 'modal/modal.scss';

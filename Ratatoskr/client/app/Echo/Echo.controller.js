@@ -3,10 +3,6 @@
 angular.module('ratatoskrApp')
   .controller('EchoCtrl', function ($scope, EchoClientForm, EchoClientThrift, EchoClientREST) {
 
-    $scope.input = {text : "Hello World"};
-    $scope.output = {text : ""};
-
-
     $scope.EchoThriftVM = {};
     $scope.EchoThriftVM.output = {};
     $scope.EchoThriftVM.object = {};
@@ -30,15 +26,6 @@ angular.module('ratatoskrApp')
       var inputString = $scope.EchoRESTVM.object;
         EchoClientREST.echo(inputString, function(outputString){
         $scope.EchoRESTVM.output = outputString.output;
-      });
-    }
-
-    function echo(){
-      CalculatorClientREST.calc($scope.Calculator.calcobj, function(result){
-        $scope.Calculator.output = result;
-        if(!$scope.$$phase) {
-          $scope.$apply();
-        }
       });
     }
 

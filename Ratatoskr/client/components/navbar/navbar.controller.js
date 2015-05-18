@@ -9,6 +9,10 @@ angular.module('ratatoskrApp')
       {
         'title': 'Echo',
         'link': '/Echo'
+      },
+      {
+        'title': 'Calculator',
+        'link': '/Calculator'
       }
     ];
 

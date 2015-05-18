@@ -15,9 +15,6 @@ angular.module('ratatoskrApp')
       }
     ];
 
-    var meaningOfLife = 42;
-
-    // Public API here
     return {
       fields: function () {
         return echoFields;
