@@ -11,7 +11,7 @@
 # generated files
 bin/
 gen/
-dist/*
+dist/
 
 # Local configuration file (sdk path, etc)
 local.properties
@@ -33,5 +33,3 @@ proguard/
 .gradletasknamecache
 .gradle/
 build/
-bin/
-
