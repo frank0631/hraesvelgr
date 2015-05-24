@@ -144,3 +144,14 @@ configure(subprojects - thriftProject) {
 
 }
 
+task printJavaHome{
+    println ("JAVA_HOME")
+    println System.getenv("JAVA_HOME")
+    println ("============")
+}
+
+task printPath{
+    println ("PATH")
+    println System.getenv("PATH")
+    println ("============")
+}

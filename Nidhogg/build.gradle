@@ -7,9 +7,6 @@ buildscript {
     repositories {
         mavenCentral()
         jcenter()
-        maven {
-            url 'http://dl.bintray.com/esistegalaber/maven/'
-        }
     }
     dependencies {
         classpath 'co.tomlee.gradle.plugins:gradle-thrift-plugin:0.0.6'
@@ -41,11 +38,12 @@ dependencies {
 }
 
 generateThriftSource {
-    verbose false
-    debug false
-    strict false
+    verbose true
+    debug true
+    strict true
 
-    path file('vendor/thrift')
+    path file('src/main/thrift')
+    executable '/usr/local/bin/thrift'
 
     generators {
         java {
