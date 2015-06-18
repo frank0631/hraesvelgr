@@ -43,7 +43,7 @@ generateThriftSource {
     strict true
 
     path file('src/main/thrift')
-    executable '/usr/local/bin/thrift'
+    executable '/usr/bin/thrift'
 
     generators {
         java {

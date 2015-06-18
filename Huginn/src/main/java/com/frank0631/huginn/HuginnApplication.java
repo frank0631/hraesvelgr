@@ -40,6 +40,28 @@ public class HuginnApplication implements CommandLineRunner {
         repository.save(new CustomerEntity(new Customer("Kim", "Bauer")));
         repository.save(new CustomerEntity(new Customer("David", "Palmer")));
         repository.save(new CustomerEntity(new Customer("Michelle", "Dessler")));
+
+        // fetch all customers
+        System.out.println("Customers found with findAll():");
+        System.out.println("-------------------------------");
+        for (Customer customer : repository.findAll()) {
+            System.out.println(customer);
+        }
+        System.out.println();
+
+        // fetch an individual customer by ID
+        Customer customer = repository.findOne(1L);
+        System.out.println("Customer found with findOne(1L):");
+        System.out.println("--------------------------------");
+        System.out.println(customer);
+        System.out.println();
+
+        // fetch customers by last name
+        System.out.println("Customer found with findByLastName('Bauer'):");
+        System.out.println("--------------------------------------------");
+        for (Customer bauer : repository.findByLastName("Bauer")) {
+            System.out.println(bauer);
+        }
     }
 
     @Bean

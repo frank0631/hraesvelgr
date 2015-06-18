@@ -12,15 +12,13 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/customers")
+@RequestMapping("/api")
 public class CustomerController {
 
     @Autowired
     private CustomerRepository customerRepository;
 
-    @RequestMapping(method = RequestMethod.GET,
-            produces = {MediaType.APPLICATION_JSON_VALUE},
-            consumes = {MediaType.ALL_VALUE})
+    @RequestMapping(value = "customer", method = RequestMethod.GET)
     public ResponseEntity<List<CustomerEntity>> getCustomerByLastName(
             @RequestParam(value = "lastName", required = true) final String lastName) {
         List<CustomerEntity> customerEntities = customerRepository.findByLastName(lastName);
