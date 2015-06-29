@@ -33,3 +33,11 @@ proguard/
 .gradle/
 build/
 bin/
+
+Nidhogg/dist/thriftModels.zip
+
+Nidhogg/dist/bowerNidhogg.zip
+
+Nidhogg/dist/thriftJava.zip
+
+Nidhogg/dist/thriftJs.zip
