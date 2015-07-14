@@ -41,6 +41,8 @@ dependencies {
     compile("org.springframework.boot:spring-boot-starter-web") {
         exclude module: "spring-boot-starter-tomcat"
     }
+    compile("org.springframework.boot:spring-boot-starter-data-rest")
+
     compile("com.h2database:h2")
     compile('org.hibernate:hibernate-core:4.3.9.Final')
     compile('org.hibernate:hibernate-entitymanager:4.3.9.Final')
