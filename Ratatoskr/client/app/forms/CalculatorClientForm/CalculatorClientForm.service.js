@@ -10,7 +10,7 @@ angular.module('ratatoskrApp')
         templateOptions: {
           label: 'num1',
           placeholder: '5',
-          required: true,
+          required: true
         }
       },
       {
@@ -19,7 +19,7 @@ angular.module('ratatoskrApp')
         templateOptions: {
           label: 'num2',
           placeholder: '3',
-          required: true,
+          required: true
         }
       },
       {

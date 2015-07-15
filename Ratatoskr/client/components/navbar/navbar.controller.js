@@ -13,6 +13,10 @@ angular.module('ratatoskrApp')
       {
         'title': 'Calculator',
         'link': '/Calculator'
+      },
+      {
+        'title': 'Customer',
+        'link': '/Customer'
       }
     ];
 
