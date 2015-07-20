@@ -4,6 +4,7 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
+import org.springframework.data.rest.core.config.RepositoryRestConfiguration;
 
 import java.util.List;
 
@@ -14,4 +15,5 @@ import java.util.List;
 public interface CustomerRepository extends CrudRepository<CustomerEntity, Long> {
 
     List<CustomerEntity> findByLastName(@Param("lastName") String lastName);
+
 }

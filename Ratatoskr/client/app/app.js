@@ -16,6 +16,6 @@ angular.module('ratatoskrApp', [
 
     $locationProvider.html5Mode(true);
   })
-  .config(function (HateoasInterceptorProvider) {
-  HateoasInterceptorProvider.transformAllResponses();
-});
+//  .config(function (HateoasInterceptorProvider) {
+//  HateoasInterceptorProvider.transformAllResponses();
+//});

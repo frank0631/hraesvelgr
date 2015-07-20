@@ -36,12 +36,12 @@ dependencies {
     compile 'com.google.guava:guava:r05'
 
     compile("org.springframework.boot:spring-boot-starter-data-jpa")
+    compile("org.springframework.boot:spring-boot-starter-data-rest")
     compile("org.springframework.boot:spring-boot-starter-jetty")
     compile("org.springframework.boot:spring-boot-starter-actuator")
     compile("org.springframework.boot:spring-boot-starter-web") {
         exclude module: "spring-boot-starter-tomcat"
     }
-    compile("org.springframework.boot:spring-boot-starter-data-rest")
 
     compile("com.h2database:h2")
     compile('org.hibernate:hibernate-core:4.3.9.Final')
