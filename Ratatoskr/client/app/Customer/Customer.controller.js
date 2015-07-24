@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('ratatoskrApp')
-  .controller('CustomerCtrl', function ($scope, CustomerClientForm, CustomerClientREST) {
+  .controller('CustomerCtrl', function($scope, CustomerClientForm, CustomerClientREST) {
 
     $scope.CustomerVM = {};
     $scope.CustomerVM.output = {};
@@ -11,15 +11,25 @@ angular.module('ratatoskrApp')
 
     function customerSubmit() {
       var inputObject = $scope.CustomerVM.object;
-      CustomerClientREST.save({firstName:inputObject.first, lastName:inputObject.last},function () {
+      CustomerClientREST.save({
+        firstName: inputObject.first,
+        lastName: inputObject.last
+      }, function() {
         $scope.getCustomers();
       });
     }
 
+    $scope.removeCustomer = function removeCustomer(customer) {
+      var id = customer.id;
+      CustomerClientREST.delete({'id': id},
+        function() {
+          $scope.getCustomers();
+        });
+    }
 
     $scope.getCustomers = function getCustomers() {
       CustomerClientREST.query(function(spring_rest_promise) {
-        spring_rest_promise.then(function(processedResponse){
+        spring_rest_promise.then(function(processedResponse) {
           $scope.CustomerVM.output = processedResponse.data._embeddedItems;
         })
       });
