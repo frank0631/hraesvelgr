@@ -1,0 +1,52 @@
+import de.gesellix.gradle.docker.tasks.*
+
+buildscript {
+    repositories {
+        mavenCentral()
+        maven { url "https://plugins.gradle.org/m2/" }
+    }
+    dependencies {
+        classpath "de.gesellix:gradle-docker-plugin:2015-07-26T22-23-42"
+    }
+}
+
+apply plugin: "de.gesellix.docker"
+
+ext {
+    localDockerHost = "localhost"
+    remoteDockerHost = "http://172.17.42.1:4243"
+}
+
+docker {
+    dockerHost = localDockerHost
+    authConfigPlain = ["username"     : "gesellix",
+                       "password"     : "-yet-another-password-",
+                       "email"        : "tobias@gesellix.de",
+                       "serveraddress": "https://index.docker.io/v1/"]
+}
+
+task rmImage(type: DockerRmiTask) {
+    imageId = "foo"
+}
+
+task buildImage(type: DockerBuildTask) {
+    dependsOn rmImage
+    imageName = "foo"
+    buildContextDirectory = file("./docker/")
+}
+
+task stopContainer(type: DockerStopTask) {
+    dependsOn buildImage
+    containerId = "foo"
+}
+
+task rmContainer(type: DockerRmTask) {
+    dependsOn stopContainer
+    containerId = "foo"
+}
+
+task runContainer(type: DockerRunTask) {
+    dependsOn rmContainer
+    imageName = "foo"
+    containerName = "foo"
+}
