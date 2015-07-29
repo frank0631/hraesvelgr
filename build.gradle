@@ -14,6 +14,7 @@ buildscript {
         }
     }
     dependencies {
+        classpath 'co.tomlee.gradle.plugins:gradle-thrift-plugin:0.0.6'
         classpath 'com.google.guava:guava:16.0.1'
         classpath 'org.absolutegalaber:yeoman-gradle-plugin:0.3.0'
     }
@@ -23,9 +24,9 @@ repositories {
     mavenCentral()
 }
 
-Project thriftProject = project(':Nidhogg');
 project(':Nidhogg') {
     apply plugin: 'idea'
+    apply plugin: 'thrift'
 
     task setProperties() {
         project.ext {
@@ -41,9 +42,10 @@ project(':Nidhogg') {
         idea.module.jdkName = '1.8'
     }
 
-    task dist {}
+    task produceZips()
 }
 
+Project thriftProject = project(':Nidhogg');
 Collection ravens = [project(':Muninn'), project(':Huginn')]
 configure(ravens) {
     apply plugin: 'idea'
@@ -62,22 +64,21 @@ project(':Ratatoskr') {
 
 configure(subprojects - thriftProject) {
 
+    evaluationDependsOnChildren();
+
     dependencies {
-        thriftProject.dist
+        thriftProject
     }
-    //println project(':Nidhogg').ext.getProperties().toString().replaceAll(",", ",\n")
-    //println project.getProperties().toString().replaceAll(",", ",\n")
 
     if (project.plugins.hasPlugin('java')) {
 
         task setProperties() {
             project.ext {
-                //cannot use "${project.build.directory}/generated-source/ as it gets excluded from intelliJ
                 generatedThriftSrcDirJava = new File(project.projectDir, 'gen/main/java')
             }
         }
 
-        task getThriftJava(dependsOn: thriftProject.dist) << {
+        task getThriftJava()<<{
             println 'copying thrift java src to ' + project.name
             copy {
                 File zipfile = new File(thriftProject.distDir, 'thriftJava.zip')
@@ -87,7 +88,7 @@ configure(subprojects - thriftProject) {
             }
         }
 
-        task addThriftToSrc(dependsOn: getThriftJava) {
+        task addThriftToSrc(dependsOn: getThriftJava){
             if (!project.generatedThriftSrcDirJava.exists())
                 (project.generatedThriftSrcDirJava.mkdirs())
 
@@ -103,7 +104,8 @@ configure(subprojects - thriftProject) {
         }
 
         //adding build dependcies
-        getThriftJava.finalizedBy(addThriftToSrc)
+        getThriftJava.dependsOn(thriftProject.produceZips)
+        addThriftToSrc.dependsOn(getThriftJava)
         build.dependsOn(addThriftToSrc)
     }
 
@@ -111,15 +113,13 @@ configure(subprojects - thriftProject) {
 
         task setProperties() {
             project.ext {
-
                 bowerName = thriftProject.projectNameJsCase
                 generatedThriftSrcDirJs = file(bowerName)
                 generatedThriftJSSrcFile = new File(generatedThriftSrcDirJs, bowerName + '.js')
             }
         }
 
-        task getThriftJs(dependsOn: thriftProject.dist) << {
-            //println thriftProject.ext.getProperties().toString().replaceAll(",", ",\n")
+        task getThriftJs()<< {
             println 'copying thrift_bower_lib to ' + project.name
             copy {
                 File zipfile = new File(thriftProject.distDir, 'bowerNidhogg.zip')
@@ -129,8 +129,8 @@ configure(subprojects - thriftProject) {
             }
         }
 
-        task bowerLink(type: Exec) {
-            println '== linking bower in ' + project.name + ' =='
+        task bowerLink(type: Exec){
+            println 'linking bower in ' + project.name
             String command = ('bower link ./' + relativePath(generatedThriftJSSrcFile) + ' ' + bowerName)
             println command
             commandLine 'bower', 'link', './' + relativePath(generatedThriftJSSrcFile), bowerName
@@ -138,14 +138,15 @@ configure(subprojects - thriftProject) {
         bowerLink.dependsOn(getThriftJs)
 
         //adding bower install dependcies
+        getThriftJs.dependsOn(thriftProject.produceZips)
         bowerInstall.dependsOn(getThriftJs)
         bowerInstall.dependsOn(bowerLink)
     }
 
 }
 
-task printPath(){
-    println ("PATH")
-    println System.getenv("PATH")
-    println ("============")
-}
+//task printPath(){
+//    println ("PATH")
+//    println System.getenv("PATH")
+//    println ("============")
+//}

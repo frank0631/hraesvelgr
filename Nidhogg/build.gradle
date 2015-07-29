@@ -1,6 +1,5 @@
 import groovy.json.*
 
-apply plugin: 'thrift'
 apply plugin: "com.eriwen.gradle.js"
 
 buildscript {
@@ -9,7 +8,6 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'co.tomlee.gradle.plugins:gradle-thrift-plugin:0.0.6'
         classpath "com.eriwen:gradle-js-plugin:1.12.1"
         classpath 'com.eriwen:gradle-css-plugin:1.8.0'
     }
@@ -27,7 +25,6 @@ task setBowerProperties() {
 }
 setProperties.finalizedBy(setBowerProperties)
 
-
 repositories {
     mavenCentral()
 }
@@ -38,8 +35,8 @@ dependencies {
 }
 
 generateThriftSource {
-    verbose true
-    debug true
+    verbose false
+    debug false
     strict true
 
     path file('src/main/thrift')
@@ -92,7 +89,7 @@ combineJs {
     dest project.combineThriftJS
 }
 
-task bowerInit <<{
+task bowerInit(dependsOn: combineJs) <<{
     def json = JsonOutput.toJson([
             name: project.bowerName,
             version : project.bowerVersion,
@@ -128,22 +125,15 @@ task zipBower(type: Zip, dependsOn: ['generateThriftSource','bowerInit']) {
     destinationDir project.distDir
 }
 
-//bowerInit.dependsOn(build)
-bowerInit.dependsOn(combineJs)
-bowerInit.finalizedBy(zipBower)
+
 
 build.dependsOn(generateThriftSource)
-//build.dependsOn(compileJava)
 
-dist.dependsOn(build)
-dist.dependsOn(bowerInit)
+def zipCollection = [ zipThrift, zipJava, zipJs, zipBower ]
 
-build.finalizedBy(combineJs)
-build.finalizedBy(bowerInit)
-build.finalizedBy(zipThrift)
-build.finalizedBy(zipJava)
-build.finalizedBy(zipJs)
-build.finalizedBy(zipBower)
+bowerInit.dependsOn(build)
+produceZips.dependsOn(zipCollection)
+build.finalizedBy(zipCollection)
 
 clean.finalizedBy(cleanThriftZip)
 clean.finalizedBy(cleanThriftGen)
