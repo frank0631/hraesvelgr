@@ -26,8 +26,8 @@ bootRepackage {
 }
 
 jar {
-    baseName = 'gs-spring-boot'
-    version = '0.1.0'
+    baseName = 'huggin-spring-boot'
+    version = '0.1.1'
 }
 
 repositories {

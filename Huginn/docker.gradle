@@ -1,5 +1,10 @@
 import de.gesellix.gradle.docker.tasks.*
 
+// notes for setting up docker remote api locally
+// /etc/init/docker.conf
+// DOCKER_OPTS="-H tcp://127.0.0.1:2375"
+// set DOCKER_HOST 127.0.0.1:2375
+
 buildscript {
     repositories {
         mavenCentral()
@@ -13,40 +18,38 @@ buildscript {
 apply plugin: "de.gesellix.docker"
 
 ext {
-    localDockerHost = "localhost"
+    //localDockerHost = "unix:///var/run/docker.sock"
+    localDockerHost = "http://127.0.0.1:2375"
     remoteDockerHost = "http://172.17.42.1:4243"
+    imageName = "Huggin"
 }
 
 docker {
     dockerHost = localDockerHost
-    authConfigPlain = ["username"     : "gesellix",
-                       "password"     : "-yet-another-password-",
-                       "email"        : "tobias@gesellix.de",
-                       "serveraddress": "https://index.docker.io/v1/"]
 }
 
 task rmImage(type: DockerRmiTask) {
-    imageId = "foo"
+    imageId = imageName
 }
 
 task buildImage(type: DockerBuildTask) {
     dependsOn rmImage
-    imageName = "foo"
-    buildContextDirectory = file("./docker/")
+    imageName = imageName
+    buildContextDirectory = file("./")
 }
 
 task stopContainer(type: DockerStopTask) {
     dependsOn buildImage
-    containerId = "foo"
+    containerId = imageName
 }
 
 task rmContainer(type: DockerRmTask) {
     dependsOn stopContainer
-    containerId = "foo"
+    containerId = imageName
 }
 
 task runContainer(type: DockerRunTask) {
     dependsOn rmContainer
-    imageName = "foo"
-    containerName = "foo"
+    imageName = imageName
+    containerName = imageName
 }
