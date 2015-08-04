@@ -34,10 +34,7 @@ proguard/
 build/
 bin/
 
-Nidhogg/dist/thriftModels.zip
-
-Nidhogg/dist/bowerNidhogg.zip
-
-Nidhogg/dist/thriftJava.zip
-
-Nidhogg/dist/thriftJs.zip
+#Nidhogg/dist/thriftModels.zip
+#Nidhogg/dist/bowerNidhogg.zip
+#Nidhogg/dist/thriftJava.zip
+#Nidhogg/dist/thriftJs.zip

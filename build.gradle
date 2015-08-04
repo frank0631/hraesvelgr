@@ -1,22 +1,11 @@
-@Grab('com.google.guava:guava:16.0.1')
-import static com.google.common.base.CaseFormat.*
-import de.gesellix.gradle.docker.tasks.*
-
-//Util for changing cases
-String.metaClass.caseFormat = { from, to ->
-    from.to(to, delegate)
-}
-
 buildscript {
     repositories {
         jcenter()
         mavenCentral()
-        maven { url "https://plugins.gradle.org/m2/" }
         maven { url "http://dl.bintray.com/esistegalaber/maven/" }
     }
     dependencies {
         classpath 'co.tomlee.gradle.plugins:gradle-thrift-plugin:0.0.6'
-        classpath 'com.google.guava:guava:16.0.1'
         classpath 'org.absolutegalaber:yeoman-gradle-plugin:0.3.0'
     }
 }
@@ -28,22 +17,7 @@ repositories {
 project(':Nidhogg') {
     apply plugin: 'idea'
     apply plugin: 'thrift'
-
-    task setProperties() {
-        project.ext {
-            projectNameJsCase = project.name.caseFormat(UPPER_CAMEL, LOWER_HYPHEN)
-            genJavaDir = new File(project.projectDir, 'build/generated-src/main/java')
-            genJsDir = new File(project.projectDir, 'build/generated-src/main/js')
-            srcThriftDir = new File(project.projectDir, 'src/main/thrift')
-            distDir = new File(project.projectDir, 'dist')
-        }
-
-        idea.module.excludeDirs = []
-        idea.module.sourceDirs += project.srcThriftDir
-        idea.module.jdkName = '1.8'
-    }
-
-    task produceZips()
+    apply from: '../thriftSrc.gradle'
 }
 
 Project thriftProject = project(':Nidhogg');
@@ -63,88 +37,27 @@ project(':Ratatoskr') {
     // use yo angular-fullstack appname
 }
 
+//configure producer/consumer relationship for thriftProject/subprojects
 configure(subprojects - thriftProject) {
 
     evaluationDependsOnChildren();
+
+    ext {
+      thriftProjectProduceTask = thriftProject.produceZips
+      thriftProjectDistDir = thriftProject.distDir
+      thriftProjectName = thriftProject.projectNameJsCase
+    }
 
     dependencies {
         thriftProject
     }
 
     if (project.plugins.hasPlugin('java')) {
-
-        task setProperties() {
-            project.ext {
-                generatedThriftSrcDirJava = new File(project.projectDir, 'gen/main/java')
-            }
-        }
-
-        task getThriftJava << {
-            println 'copying thrift java src to ' + project.name
-            copy {
-                File zipfile = new File(thriftProject.distDir, 'thriftJava.zip')
-                File outputDir = project.generatedThriftSrcDirJava
-                from zipTree(zipfile)
-                into outputDir
-            }
-        }
-
-        task addThriftToSrc(dependsOn: getThriftJava) << {
-            if (!project.generatedThriftSrcDirJava.exists())
-                (project.generatedThriftSrcDirJava.mkdirs())
-
-            println 'adding generated thrift ' + relativePath(project.generatedThriftSrcDirJava) + ' to ' + project.name
-            sourceSets.main.java {
-                srcDir relativePath(project.generatedThriftSrcDirJava)
-            }
-            idea.module {
-                sourceDirs += project.generatedThriftSrcDirJava
-                //'build/generated-src/main/java'
-                //project.generatedThriftSrcDirJava
-            }
-        }
-
-        //adding build dependcies
-        getThriftJava.dependsOn(thriftProject.produceZips)
-        addThriftToSrc.dependsOn(getThriftJava)
-        build.dependsOn(getThriftJava)
-        build.dependsOn(addThriftToSrc)
-        compileJava.dependsOn(addThriftToSrc)
+      apply from: '../thriftJava.gradle'
     }
 
     if (project.plugins.hasPlugin('org.absolutegalaber.yeoman')) {
-
-        task setProperties() {
-            project.ext {
-                bowerName = thriftProject.projectNameJsCase
-                generatedThriftSrcDirJs = file(bowerName)
-                generatedThriftJSSrcFile = new File(generatedThriftSrcDirJs, bowerName + '.js')
-            }
-        }
-
-        task getThriftJs << {
-            println 'copying thrift_bower_lib to ' + project.name
-            copy {
-                File zipfile = new File(thriftProject.distDir, 'bowerNidhogg.zip')
-                File outputDir = generatedThriftSrcDirJs
-                from zipTree(zipfile)
-                into outputDir
-            }
-        }
-
-        task bowerLink(type: Exec) {
-            String command = ('bower link ./' + relativePath(generatedThriftJSSrcFile) + ' ' + bowerName)
-            commandLine 'bower', 'link', './' + relativePath(generatedThriftJSSrcFile), bowerName
-            doLast{
-                println 'linking bower in ' + project.name
-            }
-        }
-        bowerLink.dependsOn(getThriftJs)
-
-        //adding bower install dependcies
-        getThriftJs.dependsOn(thriftProject.produceZips)
-        bowerInstall.dependsOn(getThriftJs)
-        bowerInstall.dependsOn(bowerLink)
+      apply from: '../thriftJS.gradle'
     }
 
 }

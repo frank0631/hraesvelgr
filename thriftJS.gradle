@@ -1,0 +1,31 @@
+task setProperties() {
+    project.ext {
+        bowerName = thriftProjectName
+        generatedThriftSrcDirJs = file(bowerName)
+        generatedThriftJSSrcFile = new File(generatedThriftSrcDirJs, bowerName + '.js')
+    }
+}
+
+task getThriftJs << {
+    println 'copying thrift_bower_lib to ' + project.name
+    copy {
+        File zipfile = new File(thriftProjectDistDir, 'bowerNidhogg.zip')
+        File outputDir = generatedThriftSrcDirJs
+        from zipTree(zipfile)
+        into outputDir
+    }
+}
+
+task bowerLink(type: Exec) {
+    String command = ('bower link ./' + relativePath(generatedThriftJSSrcFile) + ' ' + bowerName)
+    commandLine 'bower', 'link', './' + relativePath(generatedThriftJSSrcFile), bowerName
+    doLast{
+        println 'linking bower in ' + project.name
+    }
+}
+bowerLink.dependsOn(getThriftJs)
+
+//adding bower install dependcies
+getThriftJs.dependsOn(thriftProjectProduceTask)
+bowerInstall.dependsOn(getThriftJs)
+bowerInstall.dependsOn(bowerLink)
