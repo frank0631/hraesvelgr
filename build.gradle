@@ -1,5 +1,6 @@
 @Grab('com.google.guava:guava:16.0.1')
 import static com.google.common.base.CaseFormat.*
+import de.gesellix.gradle.docker.tasks.*
 
 //Util for changing cases
 String.metaClass.caseFormat = { from, to ->
@@ -8,10 +9,10 @@ String.metaClass.caseFormat = { from, to ->
 
 buildscript {
     repositories {
+        jcenter()
         mavenCentral()
-        maven {
-            url 'http://dl.bintray.com/esistegalaber/maven/'
-        }
+        maven { url "https://plugins.gradle.org/m2/" }
+        maven { url "http://dl.bintray.com/esistegalaber/maven/" }
     }
     dependencies {
         classpath 'co.tomlee.gradle.plugins:gradle-thrift-plugin:0.0.6'
@@ -78,7 +79,7 @@ configure(subprojects - thriftProject) {
             }
         }
 
-        task getThriftJava()<<{
+        task getThriftJava << {
             println 'copying thrift java src to ' + project.name
             copy {
                 File zipfile = new File(thriftProject.distDir, 'thriftJava.zip')
@@ -88,7 +89,7 @@ configure(subprojects - thriftProject) {
             }
         }
 
-        task addThriftToSrc(dependsOn: getThriftJava){
+        task addThriftToSrc(dependsOn: getThriftJava) << {
             if (!project.generatedThriftSrcDirJava.exists())
                 (project.generatedThriftSrcDirJava.mkdirs())
 
@@ -106,7 +107,9 @@ configure(subprojects - thriftProject) {
         //adding build dependcies
         getThriftJava.dependsOn(thriftProject.produceZips)
         addThriftToSrc.dependsOn(getThriftJava)
+        build.dependsOn(getThriftJava)
         build.dependsOn(addThriftToSrc)
+        compileJava.dependsOn(addThriftToSrc)
     }
 
     if (project.plugins.hasPlugin('org.absolutegalaber.yeoman')) {
@@ -119,7 +122,7 @@ configure(subprojects - thriftProject) {
             }
         }
 
-        task getThriftJs()<< {
+        task getThriftJs << {
             println 'copying thrift_bower_lib to ' + project.name
             copy {
                 File zipfile = new File(thriftProject.distDir, 'bowerNidhogg.zip')
@@ -129,11 +132,12 @@ configure(subprojects - thriftProject) {
             }
         }
 
-        task bowerLink(type: Exec){
-            println 'linking bower in ' + project.name
+        task bowerLink(type: Exec) {
             String command = ('bower link ./' + relativePath(generatedThriftJSSrcFile) + ' ' + bowerName)
-            println command
             commandLine 'bower', 'link', './' + relativePath(generatedThriftJSSrcFile), bowerName
+            doLast{
+                println 'linking bower in ' + project.name
+            }
         }
         bowerLink.dependsOn(getThriftJs)
 

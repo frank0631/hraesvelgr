@@ -1,27 +1,21 @@
-import de.gesellix.gradle.docker.tasks.*
-
+//Docker plugin
 // notes for setting up docker remote api locally
 // /etc/init/docker.conf
-// DOCKER_OPTS="-H tcp://127.0.0.1:2375"
+// /etc/default/docker
+// DOCKER_OPTS="-H tcp://0.0.0.0:2375"
 // set DOCKER_HOST 127.0.0.1:2375
+
+import de.gesellix.gradle.docker.tasks.*
+import static groovy.json.JsonOutput.prettyPrint
+import static groovy.json.JsonOutput.toJson
 
 buildscript {
     repositories {
-        mavenCentral()
         maven { url "https://plugins.gradle.org/m2/" }
     }
     dependencies {
-        classpath "de.gesellix:gradle-docker-plugin:2015-07-26T22-23-42"
+        classpath "de.gesellix:gradle-docker-plugin:+"
     }
-}
-
-apply plugin: "de.gesellix.docker"
-
-ext {
-    //localDockerHost = "unix:///var/run/docker.sock"
-    localDockerHost = "http://127.0.0.1:2375"
-    remoteDockerHost = "http://172.17.42.1:4243"
-    imageName = "Huggin"
 }
 
 docker {
@@ -29,27 +23,44 @@ docker {
 }
 
 task rmImage(type: DockerRmiTask) {
-    imageId = imageName
+    imageId = imgName
 }
 
 task buildImage(type: DockerBuildTask) {
     dependsOn rmImage
-    imageName = imageName
-    buildContextDirectory = file("./")
+    imageName = imgName
+    buildContextDirectory = file("./docker/")
 }
 
 task stopContainer(type: DockerStopTask) {
     dependsOn buildImage
-    containerId = imageName
+    containerId = imgName
 }
 
 task rmContainer(type: DockerRmTask) {
     dependsOn stopContainer
-    containerId = imageName
+    containerId = imgName
 }
 
 task runContainer(type: DockerRunTask) {
     dependsOn rmContainer
-    imageName = imageName
-    containerName = imageName
+    dockerHost = localDockerHost
+    imageName = imgName
+    containerName = imgName
+    containerConfiguration = [
+      "ExposedPorts": ["9001/tcp": [:], "9001/tcp": [:]],
+      "HostConfig"  : [
+          "PortBindings": ["9001/tcp": [["HostPort": "9001"]]]]]
+}
+
+task info(type: DockerInfoTask) {
+  doLast {
+    println prettyPrint(toJson(info))
+  }
+}
+
+task version(type: DockerVersionTask) {
+  doLast {
+    println prettyPrint(toJson(version))
+  }
 }

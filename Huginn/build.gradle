@@ -1,5 +1,6 @@
-apply from: 'docker.gradle'
-apply plugin: 'spring-boot'
+import de.gesellix.gradle.docker.tasks.*
+import static groovy.json.JsonOutput.prettyPrint
+import static groovy.json.JsonOutput.toJson
 
 buildscript {
     repositories {
@@ -8,10 +9,27 @@ buildscript {
         maven { url "https://plugins.gradle.org/m2/" }
     }
     dependencies {
-        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.2.3.RELEASE")
-        classpath "de.gesellix:gradle-docker-plugin:2015-07-26T22-23-42"
+      classpath("org.springframework.boot:spring-boot-gradle-plugin:1.2.3.RELEASE")
+      classpath("de.gesellix:gradle-docker-plugin:+")
     }
 }
+
+plugins {
+  id "com.github.ben-manes.versions" version "0.11.3"
+  id "de.gesellix.docker" version "2015-07-26T22-23-42"
+}
+
+//set docker properties before apply from statement
+ext {
+    //localDockerHost = "unix:///var/run/docker.sock"
+    localDockerHost = "http://127.0.0.1:2375"
+    remoteDockerHost = "http://172.17.42.1:4243"
+    imgName = "Huggin-fromchild"
+    port = 9001
+}
+
+apply plugin: 'spring-boot'
+apply from: 'docker.gradle'
 
 repositories {
     mavenCentral()
@@ -46,7 +64,6 @@ dependencies {
     compile("org.springframework.boot:spring-boot-starter-web") {
         exclude module: "spring-boot-starter-tomcat"
     }
-
     compile("com.h2database:h2")
     compile('org.hibernate:hibernate-core:4.3.9.Final')
     compile('org.hibernate:hibernate-entitymanager:4.3.9.Final')
@@ -54,12 +71,13 @@ dependencies {
     compile('com.fasterxml.jackson.core:jackson-databind:2.5.3')
     compile('org.codehaus.jackson:jackson-core-asl:1.9.13')
     compile('org.codehaus.jackson:jackson-mapper-asl:1.9.13')
-
     //compile('org.hibernate:hibernate-core:5.0.0.Beta2')
 
     testCompile("junit:junit")
 }
 
-//task wrapper(type: Wrapper) {
-//    gradleVersion = '2.3'
-//}
+task copytoDocker(type: Copy, dependsOn: [jar,build]) {
+    from jar.archivePath
+    into("docker")
+}
+buildImage.dependsOn(copytoDocker)

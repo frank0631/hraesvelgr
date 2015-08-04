@@ -14,6 +14,11 @@ buildscript {
   }
 }
 
+task build();
+build.dependsOn(npmInstall);
+build.dependsOn(bowerInstall);
+build.dependsOn(gruntBuild);
+
 yeoman {
   yeomanDir = '.'
   useColors = true
