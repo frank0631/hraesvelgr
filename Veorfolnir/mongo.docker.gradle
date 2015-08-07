@@ -1,0 +1,59 @@
+//Docker plugin
+// docker volume for mongo
+
+import de.gesellix.gradle.docker.tasks.*
+import static groovy.json.JsonOutput.prettyPrint
+import static groovy.json.JsonOutput.toJson
+
+buildscript {
+    repositories {
+        maven { url "https://plugins.gradle.org/m2/" }
+    }
+    dependencies {
+        classpath "de.gesellix:gradle-docker-plugin:+"
+    }
+}
+
+ext {
+    //localDockerHost = "unix:///var/run/docker.sock"
+    localDockerHost = "http://127.0.0.1:2375"
+    remoteDockerHost = "http://172.17.42.1:4243"
+    imgName = "mongo"
+    containName = "Veorfolnir"
+    mongoPort = 27017
+    exposePort = 27017
+    registryHostname = null
+    dockerCfgFilename = null
+}
+
+docker {
+    dockerHost = localDockerHost
+}
+
+//pull image from index.docker.io instead of building our own mongodb
+task pullImageFromRemoteServer(type: DockerPullTask) {
+  imageName = "mongo"
+  tag = "latest"
+  authConfigPlain = getDockerClient().readAuthConfig(registryHostname, dockerCfgFilename)
+}
+
+task stopContainer(type: DockerStopTask) {
+    dependsOn pullImageFromRemoteServer
+    containerId = containName
+}
+
+task rmContainer(type: DockerRmTask) {
+    dependsOn stopContainer
+    containerId = containName
+}
+
+task runContainer(type: DockerRunTask) {
+    dependsOn pullImageFromRemoteServer, rmContainer
+    dockerHost = localDockerHost
+    imageName = imgName
+    containerName = containName
+    containerConfiguration = [
+      "ExposedPorts": ["$mongoPort/tcp": [:]],
+      "HostConfig"  : [
+          "PortBindings": ["$mongoPort/tcp": [["HostPort": "$exposePort"]]]]]
+}

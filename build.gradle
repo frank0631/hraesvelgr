@@ -10,6 +10,18 @@ buildscript {
     }
 }
 
+buildscript {
+    repositories {
+        jcenter()
+        mavenCentral()
+        maven { url "https://plugins.gradle.org/m2/" }
+    }
+    dependencies {
+      classpath("org.springframework.boot:spring-boot-gradle-plugin:1.2.3.RELEASE")
+      classpath("de.gesellix:gradle-docker-plugin:+")
+    }
+}
+
 repositories {
     mavenCentral()
 }
@@ -20,9 +32,12 @@ project(':Nidhogg') {
     apply from: '../thriftSrc.gradle'
 }
 
-Project thriftProject = project(':Nidhogg');
-Collection ravens = [project(':Muninn'), project(':Huginn')]
-configure(ravens) {
+project(':Muninn'){
+  apply plugin: 'idea'
+  apply plugin: 'java'
+}
+
+project(':Huginn'){
     apply plugin: 'idea'
     apply plugin: 'java'
 }
@@ -38,6 +53,7 @@ project(':Ratatoskr') {
 }
 
 //configure producer/consumer relationship for thriftProject/subprojects
+Project thriftProject = project(':Nidhogg');
 configure(subprojects - thriftProject) {
 
     evaluationDependsOnChildren();
@@ -52,13 +68,11 @@ configure(subprojects - thriftProject) {
         thriftProject
     }
 
-    if (project.plugins.hasPlugin('java')) {
+    if (project.plugins.hasPlugin('java'))
       apply from: '../thriftJava.gradle'
-    }
 
-    if (project.plugins.hasPlugin('org.absolutegalaber.yeoman')) {
+    if (project.plugins.hasPlugin('org.absolutegalaber.yeoman'))
       apply from: '../thriftJS.gradle'
-    }
 
 }
 

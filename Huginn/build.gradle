@@ -1,10 +1,5 @@
-import de.gesellix.gradle.docker.tasks.*
-import static groovy.json.JsonOutput.prettyPrint
-import static groovy.json.JsonOutput.toJson
-
 buildscript {
     repositories {
-        jcenter()
         mavenCentral()
         maven { url "https://plugins.gradle.org/m2/" }
     }
@@ -14,28 +9,7 @@ buildscript {
     }
 }
 
-plugins {
-  id "com.github.ben-manes.versions" version "0.11.3"
-  id "de.gesellix.docker" version "2015-07-26T22-23-42"
-}
-
-//set docker properties before apply from statement
-ext {
-    //localDockerHost = "unix:///var/run/docker.sock"
-    localDockerHost = "http://127.0.0.1:2375"
-    remoteDockerHost = "http://172.17.42.1:4243"
-    imgName = "Huggin-fromchild"
-    port = 9001
-}
-
 apply plugin: 'spring-boot'
-apply from: 'docker.gradle'
-
-task copytoDocker(type: Copy, dependsOn: [jar,build]) {
-    from jar.archivePath
-    into("docker")
-}
-buildImage.dependsOn(copytoDocker)
 
 repositories {
     mavenCentral()
@@ -51,7 +25,7 @@ bootRepackage {
 
 jar {
     baseName = 'huggin-spring-boot'
-    version = '0.1.1'
+    version = '0.1.2'
 }
 
 repositories {
@@ -81,3 +55,7 @@ dependencies {
 
     testCompile("junit:junit")
 }
+
+//Docker configure
+apply plugin: "de.gesellix.docker"
+apply from: 'docker/springboot.docker.gradle'
