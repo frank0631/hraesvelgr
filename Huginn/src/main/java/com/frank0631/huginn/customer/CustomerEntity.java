@@ -15,15 +15,16 @@ public class CustomerEntity extends Customer {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private long id;
+    private String id;
 
-    public CustomerEntity() {    }
+    public CustomerEntity() {
+    }
 
     public CustomerEntity(Customer customer) {
         super(customer);
     }
 
-    public long getId() {
+    public String getId() {
         return id;
     }
 

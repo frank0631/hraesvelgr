@@ -1,6 +1,5 @@
 package com.frank0631.huginn;
 
-import com.frank0631.huginn.book.BookEntity;
 import com.frank0631.huginn.calculator.CalculatorServiceHandler;
 import com.frank0631.huginn.customer.CustomerEntity;
 import com.frank0631.huginn.customer.CustomerRepository;
@@ -16,17 +15,11 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
-import org.springframework.data.rest.core.config.RepositoryRestConfiguration;
 
-import javax.annotation.PostConstruct;
 import javax.servlet.Servlet;
-import java.net.URI;
 
 @SpringBootApplication
 @EnableAutoConfiguration

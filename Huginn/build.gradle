@@ -4,8 +4,8 @@ buildscript {
         maven { url "https://plugins.gradle.org/m2/" }
     }
     dependencies {
-      classpath("org.springframework.boot:spring-boot-gradle-plugin:1.2.3.RELEASE")
-      classpath("de.gesellix:gradle-docker-plugin:+")
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.2.3.RELEASE")
+        classpath("de.gesellix:gradle-docker-plugin:+")
     }
 }
 
@@ -37,6 +37,7 @@ dependencies {
     compile 'commons-lang:commons-lang:2.6'
     compile 'com.google.guava:guava:r05'
 
+    compile("org.springframework.boot:spring-boot-starter-data-mongodb")
     compile("org.springframework.boot:spring-boot-starter-data-jpa")
     compile("org.springframework.boot:spring-boot-starter-data-rest")
     compile("org.springframework.boot:spring-boot-starter-jetty")
