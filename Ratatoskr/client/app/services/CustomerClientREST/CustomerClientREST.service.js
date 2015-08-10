@@ -14,19 +14,7 @@ angular.module('ratatoskrApp')
       'remove': {method:'DELETE'},
       'delete': {method:'DELETE'}
     });
-
-
-    //return {
-    //  query: function(callback) {
-    //    //SpringDataRestAdapter.processWithPromise($http.get("http://localhost:9001/customers")).then(callback);
-    //
-    //    var deferred = $http.get(HATEOAS_URL);
-    //    return SpringDataRestAdapter.process(deferred).then(callback);
-    //    }
-    //  };
-    //
-    //  //SpringDataRestAdapter.processWithPromise($http.get('categories')).then(function(processedResponse) {
-    //  //  $scope.categories = processedResponse._embeddedItems;
-    //  //};
-
-  });
+  })
+  .config(['config'],function (config) {
+  console.print("Huggin",config.HUGG_PORT,config.HUGG_ADDR)
+});

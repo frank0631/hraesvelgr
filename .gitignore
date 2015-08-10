@@ -34,6 +34,9 @@ proguard/
 build/
 bin/
 
+!*/Dockerfike
+!*/*.gradle
+
 #Nidhogg/dist/thriftModels.zip
 #Nidhogg/dist/bowerNidhogg.zip
 #Nidhogg/dist/thriftJava.zip

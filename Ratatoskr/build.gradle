@@ -2,15 +2,15 @@ apply plugin: 'org.absolutegalaber.yeoman'
 
 buildscript {
   repositories {
-    maven {
-      url 'http://dl.bintray.com/esistegalaber/maven/'
-    }
+    maven {url 'http://dl.bintray.com/esistegalaber/maven/'}
+    maven { url "https://plugins.gradle.org/m2/" }
     mavenCentral()
   }
   dependencies {
     classpath 'org.absolutegalaber:yeoman-gradle-plugin:0.3.0'
     classpath 'com.eriwen:gradle-css-plugin:1.8.0'
     classpath 'com.eriwen:gradle-js-plugin:1.9.0'
+    classpath("de.gesellix:gradle-docker-plugin:+")
   }
 }
 
@@ -24,5 +24,6 @@ yeoman {
   useColors = true
 }
 
-
-
+//Docker configure
+apply plugin: "de.gesellix.docker"
+apply from: 'docker/yeoman-fullstack.docker.gradle'

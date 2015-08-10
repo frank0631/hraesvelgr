@@ -34,7 +34,7 @@ docker {
 task pullImageFromRemoteServer(type: DockerPullTask) {
   imageName = "mongo"
   tag = "latest"
-  authConfigPlain = getDockerClient().readAuthConfig(registryHostname, dockerCfgFilename)
+  //authConfigPlain = getDockerClient().readAuthConfig(registryHostname, dockerCfgFilename)
 }
 
 task stopContainer(type: DockerStopTask) {

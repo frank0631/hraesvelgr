@@ -26,7 +26,7 @@ ext {
     imgName = "Huggin"
     containName = "Huggin"
     appPort = 9000
-    exposePort = 8080
+    exposePort = 9001
 }
 
 docker {
@@ -61,7 +61,6 @@ task runContainer(type: DockerRunTask) {
     containerConfiguration = [
             "ExposedPorts": ["$appPort/tcp": [:]],
             "HostConfig"  : [
-                    "WorkingDir"  : "",
                     "Links"       : ["Veorfolnir:Veor"],
                     "PortBindings": ["$appPort/tcp": [["HostPort": "$exposePort"]]]
             ]]
