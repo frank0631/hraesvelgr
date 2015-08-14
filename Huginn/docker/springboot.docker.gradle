@@ -23,8 +23,8 @@ ext {
     //localDockerHost = "unix:///var/run/docker.sock"
     localDockerHost = "http://127.0.0.1:2375"
     remoteDockerHost = "http://172.17.42.1:4243"
-    imgName = "Huggin"
-    containName = "Huggin"
+    imgName = "Huginn"
+    containName = "Huginn"
     appPort = 9000
     exposePort = 9001
 }
