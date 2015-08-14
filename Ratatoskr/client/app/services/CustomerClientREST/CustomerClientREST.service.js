@@ -1,20 +1,20 @@
 'use strict';
 
 angular.module('ratatoskrApp')
-  .service('CustomerClientREST', function ($resource, SpringDataRestInterceptor, $q) {
+  .service('CustomerClientREST', function ($resource, SpringDataRestInterceptor, HATEOAS_HUGINN_URL) {
 
-    var HATEOAS_URL = "http://localhost:9001/data/customers/:id";
+      var protocall = "http://";
+      var endpoint = "/data/customers/:id";
+      var customers_url = protocall+HATEOAS_HUGINN_URL.url+endpoint;
+      
+      return $resource(customers_url, {id: "@id"}, {
+        'get':    {method:'GET'},
+        'save':   {method:'POST'},
+        'query':  {
+          isArray:false,
+          interceptor:SpringDataRestInterceptor},
+        'remove': {method:'DELETE'},
+        'delete': {method:'DELETE'}
+      });
 
-    return $resource(HATEOAS_URL, {id: "@id"}, {
-      'get':    {method:'GET'},
-      'save':   {method:'POST'},
-      'query':  {
-        isArray:false,
-        interceptor:SpringDataRestInterceptor},
-      'remove': {method:'DELETE'},
-      'delete': {method:'DELETE'}
-    });
-  })
-  .config(['config'],function (config) {
-  console.print("Huggin",config.HUGG_PORT,config.HUGG_ADDR)
-});
+  });
