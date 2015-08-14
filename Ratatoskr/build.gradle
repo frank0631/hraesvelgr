@@ -26,4 +26,4 @@ yeoman {
 
 //Docker configure
 apply plugin: "de.gesellix.docker"
-apply from: 'docker/yeoman-fullstack.docker.gradle'
+apply from: 'yeoman-fullstack.docker.gradle'

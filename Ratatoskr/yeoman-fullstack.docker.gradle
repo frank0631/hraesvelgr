@@ -1,0 +1,99 @@
+//Docker plugin
+// notes for setting up docker remote api locally
+// /etc/init/docker.conf
+// /etc/default/docker
+// DOCKER_OPTS="-H tcp://0.0.0.0:2375"
+// set DOCKER_HOST 0.0.0.0:2375
+
+import de.gesellix.gradle.docker.tasks.*
+
+import static groovy.json.JsonOutput.prettyPrint
+import static groovy.json.JsonOutput.toJson
+
+buildscript {
+    repositories {
+        maven { url "https://plugins.gradle.org/m2/" }
+    }
+    dependencies {
+        classpath 'de.gesellix:gradle-docker-plugin:2015-07-26T22-23-42'
+    }
+}
+
+ext {
+    //localDockerHost = "unix:///var/run/docker.sock"
+    localDockerHost = "http://127.0.0.1:2375"
+    remoteDockerHost = "http://172.17.42.1:4243"
+    imgName = "Ratatoskr"
+    containName = "Ratatoskr"
+    appPort = 9000
+    exposePort = 80
+}
+
+docker {
+    dockerHost = localDockerHost
+}
+
+task rmImage(type: DockerRmiTask) {
+    imageId = imgName
+}
+
+task buildImage(type: DockerBuildTask) {
+    dependsOn rmImage
+    imageName = imgName
+    buildContextDirectory = file("./docker/")
+}
+
+task stopContainer(type: DockerStopTask) {
+    dependsOn buildImage
+    containerId = imgName
+}
+
+task rmContainer(type: DockerRmTask) {
+    dependsOn stopContainer
+    containerId = imgName
+}
+
+task runContainer(type: DockerRunTask) {
+    dependsOn rmContainer
+    dockerHost = localDockerHost
+    imageName = imgName
+    containerName = containName
+    containerConfiguration = [
+            "ExposedPorts": ["$appPort/tcp": [:]],
+            "HostConfig"  : [
+                    "Links"       : ["Huginn:Hugg"],
+                    "PortBindings": ["$appPort/tcp": [["HostPort": "$exposePort"]]]
+            ]]
+}
+
+task info(type: DockerInfoTask) {
+    doLast {
+        println prettyPrint(toJson(info))
+    }
+}
+
+task version(type: DockerVersionTask) {
+    doLast {
+        println prettyPrint(toJson(version))
+    }
+}
+
+//Add yeoman generated files to the docker folder
+task copytoDocker(type: Sync) {
+
+  def excludeFiles = ['*.gradle','*.iml','build','**/**/bower_components','**/**/docker','**/**/node_modules']
+  def hiddenExclude = ['.sass-cache','.tmp']
+
+  FileTree tree = fileTree(dir: './')
+  tree.exclude(excludeFiles)
+  tree.exclude(hiddenExclude)
+
+//  tree.each {File file ->
+//    println file.path
+//  }
+
+    from tree
+    into 'docker'
+}
+copytoDocker.dependsOn(gruntBuild)
+buildImage.dependsOn(copytoDocker)
