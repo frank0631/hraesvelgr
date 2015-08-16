@@ -1,5 +1,4 @@
 'use strict';
-
 /**
  * @ngdoc service
  * @name ratastoskrApp.CalculatorClientREST
@@ -7,7 +6,20 @@
  * # CalculatorClientREST
  * Service in the ratastoskrApp.
  */
-angular.module('ratastoskrApp')
-  .service('CalculatorClientREST', function () {
-    // AngularJS will instantiate a singleton by calling "new" on this function
-  });
+angular.module( 'ratastoskrApp' ).service( 'CalculatorClientREST', function ( $resource, ENV ) {
+	var endpoint = '/api/calculator/';
+	var HugginAddress = 'http://' + ENV.HUGG_ADDR + ':' + ENV.HUGG_PORT + endpoint;
+
+	function transformToParam( obj ) {
+		return $.param( obj ); // jshint ignore:line
+	}
+	return $resource( HugginAddress, {}, {
+		calculate: {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/x-www-form-urlencoded'
+			},
+			transformRequest: transformToParam
+		}
+	} );
+} );

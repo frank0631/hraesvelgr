@@ -15,7 +15,11 @@ angular
     'ngResource',
     'ngRoute',
     'ngSanitize',
-    'ngTouch'
+    'ngTouch',
+    'config',
+    'formly',
+    'formlyBootstrap',
+    'spring-data-rest'
   ])
   .config(function ($routeProvider) {
     $routeProvider

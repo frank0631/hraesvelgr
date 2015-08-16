@@ -2,8 +2,8 @@ yo angular Ratastoskr
 yo angular:service Calculator-Client-REST
 yo angular:service Calculator-Client-Thrift
 yo angular:service Customer-Client-REST
-yo angular:service EchoClient-REST
-yo angular:service EchoClient-Thrift
+yo angular:service Echo-Client-REST
+yo angular:service Echo-Client-Thrift
 yo angular:route Calculator
 yo angular:route Customer
 yo angular:route Echo

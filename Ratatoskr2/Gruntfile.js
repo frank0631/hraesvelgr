@@ -28,6 +28,32 @@ module.exports = function (grunt) {
   // Define the configuration for all the tasks
   grunt.initConfig({
 
+    //Constants for passing env variables
+    ngconstant: {
+      // Options for all targets
+      options: {
+        name: 'config',
+        space: '  ',
+        wrap: '"use strict";\n\n {%= __ngModule %}',
+        constants: {
+          ENV: {
+            HUGG_PORT: process.env.HUGG_PORT_9000_TCP_PORT || '9001',
+            HUGG_ADDR: process.env.HUGG_PORT_9000_TCP_ADDR || 'localhost'
+          }
+        }
+      },
+      development: {
+        options: {
+          dest: '<%= yeoman.app %>/scripts/config.js'
+        }
+      },
+      production: {
+        options: {
+          dest: '<%= yeoman.app %>/scripts/config.js'
+        }
+      }
+    },
+
     // Project settings
     yeoman: appConfig,
 
@@ -449,6 +475,7 @@ module.exports = function (grunt) {
 
     grunt.task.run([
       'clean:server',
+      'ngconstant:development',
       'wiredep',
       'concurrent:server',
       'autoprefixer:server',
@@ -473,6 +500,7 @@ module.exports = function (grunt) {
 
   grunt.registerTask('build', [
     'clean:dist',
+    'ngconstant:production',
     'wiredep',
     'useminPrepare',
     'concurrent:dist',
@@ -494,4 +522,6 @@ module.exports = function (grunt) {
     'test',
     'build'
   ]);
+
+  grunt.loadNpmTasks('grunt-ng-constant');
 };
