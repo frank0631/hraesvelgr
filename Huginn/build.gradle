@@ -59,4 +59,4 @@ dependencies {
 
 //Docker configure
 apply plugin: "de.gesellix.docker"
-apply from: 'docker/springboot.docker.gradle'
+apply from: 'springboot.docker.gradle'

@@ -26,7 +26,7 @@ ext {
     imgName = "Huginn"
     containName = "Huginn"
     appPort = 9000
-    exposePort = 9001
+    hostPort = 9001
 }
 
 docker {
@@ -62,7 +62,7 @@ task runContainer(type: DockerRunTask) {
             "ExposedPorts": ["$appPort/tcp": [:]],
             "HostConfig"  : [
                     "Links"       : ["Veorfolnir:Veor"],
-                    "PortBindings": ["$appPort/tcp": [["HostPort": "$exposePort"]]]
+                    "PortBindings": ["$appPort/tcp": [["HostPort": "$hostPort"]]]
             ]]
 }
 
@@ -79,8 +79,9 @@ task version(type: DockerVersionTask) {
 }
 
 //Add spring-boot app jar to the docker folder
-task copytoDocker(type: Copy, dependsOn: [jar, build]) {
-    from jar.archivePath
+task copytoDocker(type: Sync, dependsOn: [jar, build]) {
+  FileCollection collection = files(jar.archivePath,'Dockerfile')
+    from collection
     into("docker")
 }
 buildImage.dependsOn(copytoDocker)
