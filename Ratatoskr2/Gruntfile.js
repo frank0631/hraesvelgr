@@ -49,7 +49,12 @@ module.exports = function (grunt) {
       },
       production: {
         options: {
-          dest: '<%= yeoman.app %>/scripts/config.js'
+          dest: '<%= yeoman.dist %>/scripts/config.js'
+        }
+      },
+      nginx: {
+        options: {
+          dest: '/usr/share/nginx/html/scripts/config.js'
         }
       }
     },
@@ -475,9 +480,9 @@ module.exports = function (grunt) {
 
     grunt.task.run([
       'clean:server',
-      'ngconstant:development',
       'wiredep',
       'concurrent:server',
+      'ngconstant:development',
       'autoprefixer:server',
       'connect:livereload',
       'watch'
@@ -500,7 +505,6 @@ module.exports = function (grunt) {
 
   grunt.registerTask('build', [
     'clean:dist',
-    'ngconstant:production',
     'wiredep',
     'useminPrepare',
     'concurrent:dist',
@@ -514,7 +518,8 @@ module.exports = function (grunt) {
     'uglify',
     'filerev',
     'usemin',
-    'htmlmin'
+    'htmlmin',
+    'ngconstant:production'
   ]);
 
   grunt.registerTask('default', [

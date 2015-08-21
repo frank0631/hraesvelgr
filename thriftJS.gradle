@@ -9,23 +9,37 @@ task setProperties() {
 task getThriftJs << {
     println 'copying thrift_bower_lib to ' + project.name
     copy {
+        //TODO pass bower zip from project properties
         File zipfile = new File(thriftProjectDistDir, 'bowerNidhogg.zip')
         File outputDir = generatedThriftSrcDirJs
         from zipTree(zipfile)
         into outputDir
     }
 }
+getThriftJs.dependsOn(thriftProjectProduceTask)
 
-task bowerLink(type: Exec) {
-    String command = ('bower link ./' + relativePath(generatedThriftJSSrcFile) + ' ' + bowerName)
-    commandLine 'bower', 'link', './' + relativePath(generatedThriftJSSrcFile), bowerName
+//Use relativePath of nidhogg bower lib instead of linking
+/*
+task bowerLinkThriftLib(type: Exec) {
+    String command = ('bower link')
+    commandLine 'bower', 'link'
+    workingDir relativePath(generatedThriftSrcDirJs)
     doLast{
-        println 'linking bower in ' + project.name
+        println 'linking thift project to global bower'
     }
 }
-bowerLink.dependsOn(getThriftJs)
 
-//adding bower install dependcies
-getThriftJs.dependsOn(thriftProjectProduceTask)
-bowerInstall.dependsOn(getThriftJs)
-bowerInstall.dependsOn(bowerLink)
+task bowerLinkApp(type: Exec) {
+    String command = ('bower link' + bowerName)
+    commandLine 'bower', 'link', bowerName
+    workingDir '.'
+    doFirst{
+        println 'linking bower in ' + project.name
+        println workingDir.absolutePath
+        println command
+    }
+}
+
+bowerLinkThriftLib.dependsOn(getThriftJs)
+bowerLinkApp.dependsOn(bowerLinkThriftLib)
+bowerInstall.dependsOn(bowerLinkApp)*/

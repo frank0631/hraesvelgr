@@ -37,10 +37,10 @@ module.exports = function(config) {
       'bower_components/angular-formly/dist/formly.js',
       'bower_components/bootstrap/dist/js/bootstrap.js',
       'bower_components/angular-formly-templates-bootstrap/dist/angular-formly-templates-bootstrap.js',
-      'bower_components/bower-thrift/thrift.js',
-      'bower_components/nidhogg/nidhogg.js',
       'bower_components/angular-spring-data-rest/dist/angular-spring-data-rest.js',
       'bower_components/angular-smart-table/dist/smart-table.js',
+      'bower_components/bower-thrift/thrift.js',
+      'bower_components/nidhogg/index.js',
       'bower_components/angular-mocks/angular-mocks.js',
       // endbower
       "app/scripts/**/*.js",

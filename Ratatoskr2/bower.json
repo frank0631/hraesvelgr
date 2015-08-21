@@ -16,10 +16,10 @@
     "api-check": "~7.5.0",
     "angular-formly": "~6.23.2",
     "angular-formly-templates-bootstrap": "~6.0.0",
-    "bower-thrift": "~0.9.1",
-    "nidhogg": "./nidhogg",
     "angular-spring-data-rest": "~0.4.2",
-    "angular-smart-table": "~2.1.2"
+    "angular-smart-table": "~2.1.2",
+    "bower-thrift": "~0.9.1",
+    "nidhogg": "./nidhogg/nidhogg.js"
   },
   "devDependencies": {
     "angular-mocks": "^1.3.0"
@@ -34,5 +34,8 @@
         "dist/js/bootstrap.js"
       ]
     }
+  },
+  "resolutions": {
+    "angular": "1.4.4"
   }
 }
