@@ -1,0 +1,125 @@
+
+//Docker plugin
+// notes for setting up docker remote api locally
+// /etc/init/docker.conf
+// /etc/default/docker
+// DOCKER_OPTS="-H tcp://0.0.0.0:2375"
+// set DOCKER_HOST 0.0.0.0:2375
+
+import de.gesellix.gradle.docker.tasks.*
+
+import static groovy.json.JsonOutput.prettyPrint
+import static groovy.json.JsonOutput.toJson
+
+buildscript {
+    repositories {
+        maven { url "https://plugins.gradle.org/m2/" }
+    }
+    dependencies {
+        classpath 'de.gesellix:gradle-docker-plugin:2015-07-26T22-23-42'
+    }
+}
+
+ext {
+    //localDockerHost = "unix:///var/run/docker.sock"
+    localDockerHost = "http://127.0.0.1:2375"
+    remoteDockerHost = "http://172.17.42.1:4243"
+    imgName = "Ratatoskr"
+    containName = "Ratatoskr"
+    appPort = 80
+    hostPort = 80
+}
+
+docker {
+    dockerHost = localDockerHost
+}
+
+task rmImage(type: DockerRmiTask) {
+    imageId = imgName
+}
+
+task buildImage(type: DockerBuildTask) {
+    dependsOn rmImage
+    imageName = imgName
+    buildContextDirectory = file("./docker/")
+}
+
+task stopContainer(type: DockerStopTask) {
+    containerId = imgName
+}
+
+task rmContainer(type: DockerRmTask) {
+    dependsOn stopContainer
+    containerId = imgName
+}
+
+task runContainer(type: DockerRunTask) {
+    dependsOn buildImage
+    dependsOn rmContainer
+    dockerHost = localDockerHost
+    imageName = imgName
+    containerName = containName
+    containerConfiguration = [
+            "ExposedPorts": ["$appPort/tcp": [:]],
+            "HostConfig"  : [
+                    "Links"       : ["Huginn:Hugg"],
+                    "PortBindings": ["$appPort/tcp": [["HostPort": "$hostPort"]]]
+            ]]
+}
+
+task info(type: DockerInfoTask) {
+    doLast {
+        println prettyPrint(toJson(info))
+    }
+}
+
+task version(type: DockerVersionTask) {
+    doLast {
+        println prettyPrint(toJson(version))
+    }
+}
+
+/*
+//Add yeoman generated files to the docker folder
+task copytoDocker(type: Sync) {
+  def excludeProjectFiles = ['*.gradle','*.iml','build','docker']
+  def hiddenExclude = ['.sass-cache','.tmp']
+  def excludeYeomanFiles = ['bower_components','node_modules'] //,'dist']
+
+  FileTree tree = fileTree(dir: './')
+  tree.exclude(excludeProjectFiles)
+  tree.exclude(hiddenExclude)
+  tree.exclude(excludeYeomanFiles)
+    from tree
+    into 'docker'
+}
+*/
+
+
+//If this were a purely static angular app
+task syncGruntFile(type: Sync){
+  FileCollection collection = files('Gruntfile.js','package.json','.bowerrc','bower.json')
+  from collection
+  into 'docker'
+}
+task copyDockerFile(type: Copy){
+  mustRunAfter syncGruntFile
+  from file('Dockerfile')
+  into 'docker'
+}
+task copyDist(type: Copy){
+  mustRunAfter syncGruntFile
+  FileTree distFT = fileTree(dir: './dist/')
+  from distFT
+  into 'docker'
+}
+task copytoDocker(){
+  dependsOn copyDockerFile
+  dependsOn syncGruntFile
+  dependsOn copyDist
+}
+copyDist.dependsOn(gruntBuild)
+
+
+
+buildImage.dependsOn(copytoDocker)

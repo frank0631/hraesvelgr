@@ -1,0 +1,28 @@
+FROM nginx
+
+# Install node.js
+RUN apt-get -yq update && \
+    apt-get -yq install git curl net-tools sudo
+RUN apt-get install -y nodejs npm git git-core
+RUN ln -s /usr/bin/nodejs /usr/bin/node
+
+# Install Compass
+RUN apt-get install -y ruby-full rubygems-integration
+RUN gem install sass
+RUN gem install compass
+
+# Install bower, grunt
+RUN npm install -g grunt-cli bower
+
+# Cache node packages
+ADD package.json /tmp/package.json
+RUN cd /tmp && npm install
+RUN mkdir -p /opt/app && cp -a /tmp/node_modules /opt/app/
+
+WORKDIR /opt/app
+ADD     . /opt/app
+RUN     npm install
+RUN     bower install --allow-root
+CMD     grunt build &&\
+        cp -R dist/. /usr/share/nginx/html &&\
+        nginx
