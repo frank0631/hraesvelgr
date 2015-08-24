@@ -3,22 +3,12 @@ buildscript {
         jcenter()
         mavenCentral()
         maven { url "http://dl.bintray.com/esistegalaber/maven/" }
+        maven { url "https://plugins.gradle.org/m2/" }
     }
     dependencies {
         classpath 'co.tomlee.gradle.plugins:gradle-thrift-plugin:0.0.6'
         classpath 'org.absolutegalaber:yeoman-gradle-plugin:0.3.0'
-    }
-}
-
-buildscript {
-    repositories {
-        jcenter()
-        mavenCentral()
-        maven { url "https://plugins.gradle.org/m2/" }
-    }
-    dependencies {
-      classpath("org.springframework.boot:spring-boot-gradle-plugin:1.2.3.RELEASE")
-      classpath("de.gesellix:gradle-docker-plugin:+")
+        classpath "de.gesellix:gradle-docker-plugin:+"
     }
 }
 
@@ -26,10 +16,13 @@ repositories {
     mavenCentral()
 }
 
+// Set common docker properties for inheritance
+apply from: 'common.docker.gradle'
+
 project(':Nidhogg') {
     apply plugin: 'idea'
     apply plugin: 'thrift'
-    apply from: '../thriftSrc.gradle'
+    apply from: '../thrift.src.gradle'
 }
 
 project(':Muninn'){
@@ -69,10 +62,10 @@ configure(subprojects - thriftProject) {
     }
 
     if (project.plugins.hasPlugin('java'))
-      apply from: '../thriftJava.gradle'
+      apply from: '../thrift.java.gradle'
 
     if (project.plugins.hasPlugin('org.absolutegalaber.yeoman'))
-      apply from: '../thriftJS.gradle'
+      apply from: '../thrift.js.gradle'
 
 }
 

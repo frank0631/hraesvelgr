@@ -15,10 +15,11 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.context.embedded.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Import;
-
+import java.util.ArrayList;
 import javax.servlet.Servlet;
 
 @SpringBootApplication
@@ -53,14 +54,28 @@ public class HuginnApplication implements CommandLineRunner {
 
     //Calculator
     @Bean
-    public Servlet calculator(TProtocolFactory protocolFactory, CalculatorServiceHandler handler) {
-        return new TServlet(new TCalculatorService.Processor<CalculatorServiceHandler>(handler), protocolFactory);
+    public ServletRegistrationBean calculator(TProtocolFactory protocolFactory, CalculatorServiceHandler handler) {
+      ServletRegistrationBean calculatorServletRegisteration = new ServletRegistrationBean();
+      Servlet calculatorServlet = new TServlet(new TCalculatorService.Processor<CalculatorServiceHandler>(handler), protocolFactory);
+      ArrayList <String> thriftUrl = new ArrayList<String>();
+      thriftUrl.add("/thrift/*");
+      calculatorServletRegisteration.setServlet(calculatorServlet);
+      calculatorServletRegisteration.setName("calculatorServlet");
+      calculatorServletRegisteration.setUrlMappings(thriftUrl);
+      return calculatorServletRegisteration;
     }
 
     //Echo
     @Bean
-    public Servlet echo(TProtocolFactory protocolFactory, EchoServiceHandler handler) {
-        return new TServlet(new TEchoService.Processor<EchoServiceHandler>(handler), protocolFactory);
+    public ServletRegistrationBean echo(TProtocolFactory protocolFactory, EchoServiceHandler handler) {
+      ServletRegistrationBean echoServletRegisteration = new ServletRegistrationBean();
+      Servlet echoServlet = new TServlet(new TEchoService.Processor<EchoServiceHandler>(handler), protocolFactory);
+      ArrayList <String> thriftUrl = new ArrayList<String>();
+      thriftUrl.add("/thrift/*");
+      echoServletRegisteration.setServlet(echoServlet);
+      echoServletRegisteration.setName("echoServlet");
+      echoServletRegisteration.setUrlMappings(thriftUrl);
+      return echoServletRegisteration;
     }
 
 

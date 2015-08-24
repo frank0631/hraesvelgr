@@ -1,12 +1,4 @@
-//Docker plugin
-// notes for setting up docker remote api locally
-// /etc/init/docker.conf
-// /etc/default/docker
-// DOCKER_OPTS="-H tcp://0.0.0.0:2375"
-// set DOCKER_HOST 0.0.0.0:2375
-
 import de.gesellix.gradle.docker.tasks.*
-
 import static groovy.json.JsonOutput.prettyPrint
 import static groovy.json.JsonOutput.toJson
 
@@ -20,13 +12,11 @@ buildscript {
 }
 
 ext {
-    //localDockerHost = "unix:///var/run/docker.sock"
-    localDockerHost = "http://127.0.0.1:2375"
-    remoteDockerHost = "http://172.17.42.1:4243"
-    imgName = "Huginn"
-    containName = "Huginn"
-    appPort = 9000
-    hostPort = 9001
+  imgName = "frank0631/huginn"
+  repoName = "frank0631/huginn"
+  containName = "Huginn"
+  appPort = 9000
+  hostPort = 9001
 }
 
 docker {
@@ -45,12 +35,12 @@ task buildImage(type: DockerBuildTask) {
 
 task stopContainer(type: DockerStopTask) {
     dependsOn buildImage
-    containerId = imgName
+    containerId = containName
 }
 
 task rmContainer(type: DockerRmTask) {
     dependsOn stopContainer
-    containerId = imgName
+    containerId = containName
 }
 
 task runContainer(type: DockerRunTask) {
@@ -66,18 +56,6 @@ task runContainer(type: DockerRunTask) {
             ]]
 }
 
-task info(type: DockerInfoTask) {
-    doLast {
-        println prettyPrint(toJson(info))
-    }
-}
-
-task version(type: DockerVersionTask) {
-    doLast {
-        println prettyPrint(toJson(version))
-    }
-}
-
 //Add spring-boot app jar to the docker folder
 task copytoDocker(type: Sync, dependsOn: [jar, build]) {
   FileCollection collection = files(jar.archivePath,'Dockerfile')
@@ -85,3 +63,8 @@ task copytoDocker(type: Sync, dependsOn: [jar, build]) {
     into("docker")
 }
 buildImage.dependsOn(copytoDocker)
+
+task pushImageToPrivateRepo(type: DockerPushTask) {
+  repositoryName = repoName
+  authConfigPlain = getDockerClient().readAuthConfig(registryHostname, dockerCfgFilename)
+}

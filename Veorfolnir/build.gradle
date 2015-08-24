@@ -11,4 +11,4 @@ buildscript {
 
 //Docker configure
 apply plugin: "de.gesellix.docker"
-apply from: 'mongo.docker.gradle'
+apply from: 'veorfolnir.docker.gradle'

@@ -7,8 +7,8 @@
  * Service in the ratastoskrApp.
  */
 angular.module( 'ratastoskrApp' ).service( 'CalculatorClientThrift', function ( $window, $q, ENV ) {
-	var endpoint = '/calculator/';
-	var HugginAddress = 'http://' + ENV.HUGG_ADDR + ':' + ENV.HUGG_PORT + endpoint;
+	var endpoint = '/thrift/calculator/';
+	var HugginAddress = ENV.HugginAddress+endpoint;
 	var CalculatorClient = ( function () {
 		var transport = new $window.Thrift.Transport( HugginAddress );
 		var protocol = new $window.Thrift.Protocol( transport );

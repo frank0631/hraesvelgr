@@ -10,9 +10,9 @@ RUN npm install -g bower grunt-cli
 # Cache node packages
 ADD package.json /tmp/package.json
 RUN cd /tmp && npm install
-RUN mkdir -p /usr/share/nginx/html &&\
-    cp -a /tmp/node_modules /usr/share/nginx/html
+RUN mkdir -p /opt/app &&\
+    cp -a /tmp/node_modules /opt/app
 
-ADD . /usr/share/nginx/html
-WORKDIR /usr/share/nginx/html
-CMD grunt ngconstant:nginx && nginx -g "daemon off;"
+WORKDIR /opt/app
+ADD . /opt/app
+CMD bash Ratatoskr.sh

@@ -1,6 +1,3 @@
-//Docker plugin
-// docker volume for mongo
-
 import de.gesellix.gradle.docker.tasks.*
 import static groovy.json.JsonOutput.prettyPrint
 import static groovy.json.JsonOutput.toJson
@@ -15,30 +12,29 @@ buildscript {
 }
 
 ext {
-    //localDockerHost = "unix:///var/run/docker.sock"
-    localDockerHost = "http://127.0.0.1:2375"
-    remoteDockerHost = "http://172.17.42.1:4243"
-    imgName = "mongo"
-    containName = "Veorfolnir"
-    mongoPort = 27017
-    exposePort = 27017
-    registryHostname = null
-    dockerCfgFilename = null
+  imgName = "frank0631/veorfolnir"
+  repoName = "frank0631/veorfolnir"
+  containName = "Veorfolnir"
+  mongoPort = 27017
+  exposePort = 27017
 }
 
 docker {
     dockerHost = localDockerHost
 }
 
-//pull image from index.docker.io instead of building our own mongodb
-task pullImageFromRemoteServer(type: DockerPullTask) {
-  imageName = "mongo"
-  tag = "latest"
-  //authConfigPlain = getDockerClient().readAuthConfig(registryHostname, dockerCfgFilename)
+task rmImage(type: DockerRmiTask) {
+    imageId = imgName
+}
+
+task buildImage(type: DockerBuildTask) {
+    dependsOn rmImage
+    imageName = imgName
+    buildContextDirectory = file(".")
 }
 
 task stopContainer(type: DockerStopTask) {
-    dependsOn pullImageFromRemoteServer
+    dependsOn buildImage
     containerId = containName
 }
 
@@ -48,7 +44,7 @@ task rmContainer(type: DockerRmTask) {
 }
 
 task runContainer(type: DockerRunTask) {
-    dependsOn pullImageFromRemoteServer, rmContainer
+    dependsOn buildImage, rmContainer
     dockerHost = localDockerHost
     imageName = imgName
     containerName = containName
@@ -56,4 +52,17 @@ task runContainer(type: DockerRunTask) {
       "ExposedPorts": ["$mongoPort/tcp": [:]],
       "HostConfig"  : [
           "PortBindings": ["$mongoPort/tcp": [["HostPort": "$exposePort"]]]]]
+}
+
+task pushImage(type: DockerPushTask) {
+  repositoryName = repoName
+  authConfigPlain = getDockerClient().readAuthConfig(registryHostname, dockerCfgFilename)
+}
+
+task pullImageOnRemoteServer(type: DockerPullTask) {
+  dependsOn pushImage
+
+  dockerHost = remoteDockerHost
+  imageName = imgName
+  registry = "hraesvelgr/64cefa1e-frank0631.node.tutum.io"
 }

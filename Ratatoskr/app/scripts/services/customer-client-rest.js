@@ -8,7 +8,7 @@
  */
 angular.module( 'ratastoskrApp' ).service( 'CustomerClientREST', function ( $resource, SpringDataRestInterceptor, ENV ) {
 	var endpoint = "/data/customers/:id";
-	var HugginAddress = 'http://' + ENV.HUGG_ADDR + ':' + ENV.HUGG_PORT + endpoint;
+	var HugginAddress = ENV.HugginAddress+endpoint;
 	return $resource( HugginAddress, {
 		id: "@id"
 	}, {

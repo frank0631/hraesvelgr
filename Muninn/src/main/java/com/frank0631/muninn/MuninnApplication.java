@@ -15,7 +15,7 @@ import java.lang.reflect.Field;
 
 public class MuninnApplication {
     private static String Message = "Hello";;
-    private static String echoEndpoint = "/echo/";
+    private static String echoEndpoint = "thrift/echo/";
 
     private static final int PORT = 9001;
 

@@ -25,6 +25,13 @@ module.exports = function (grunt) {
     dist: 'dist'
   };
 
+  var HugginAddress =
+    "http://"+(process.env.HUGG_PORT_9000_TCP_ADDR || 'localhost')+
+    ":"+(process.env.HUGG_PORT_9000_TCP_PORT || '9001');
+  var HugginLocalIP =
+    "http://"+process.env.HUGG_PORT_9000_TCP_ADDR+
+    ":"+ process.env.HUGG_PORT_9000_TCP_PORT;
+
   // Define the configuration for all the tasks
   grunt.initConfig({
 
@@ -37,8 +44,7 @@ module.exports = function (grunt) {
         wrap: '"use strict";\n\n {%= __ngModule %}',
         constants: {
           ENV: {
-            HUGG_PORT: process.env.HUGG_PORT_9000_TCP_PORT || '9001',
-            HUGG_ADDR: process.env.HUGG_PORT_9000_TCP_ADDR || 'localhost'
+            HugginAddress: HugginAddress
           }
         }
       },
@@ -52,12 +58,30 @@ module.exports = function (grunt) {
           dest: '<%= yeoman.dist %>/scripts/config.js'
         }
       },
-      nginx: {
+      nginx: { //use nginx proxy
         options: {
-          dest: '/usr/share/nginx/html/scripts/config.js'
+          dest: '<%= yeoman.dist %>/scripts/config.js'
+        },
+        constants: {
+          ENV: {
+            HugginAddress: ""
+          }
         }
       }
     },
+
+    includereplace: {
+      nginx: {
+        options: {
+          globals: {
+            HugginAddress: HugginLocalIP
+          }
+        },
+        src: 'proxy.conf',
+        dest: '/etc/nginx/conf.d/default.conf'
+      }
+    },
+
 
     // Project settings
     yeoman: appConfig,
@@ -480,9 +504,9 @@ module.exports = function (grunt) {
 
     grunt.task.run([
       'clean:server',
+      'ngconstant:development',
       'wiredep',
       'concurrent:server',
-      'ngconstant:development',
       'autoprefixer:server',
       'connect:livereload',
       'watch'
@@ -529,4 +553,5 @@ module.exports = function (grunt) {
   ]);
 
   grunt.loadNpmTasks('grunt-ng-constant');
+  grunt.loadNpmTasks('grunt-include-replace');
 };

@@ -8,7 +8,7 @@
  */
 angular.module( 'ratastoskrApp' ).service( 'CalculatorClientREST', function ( $resource, ENV ) {
 	var endpoint = '/api/calculator/';
-	var HugginAddress = 'http://' + ENV.HUGG_ADDR + ':' + ENV.HUGG_PORT + endpoint;
+	var HugginAddress = ENV.HugginAddress+endpoint;
 
 	function transformToParam( obj ) {
 		return $.param( obj ); // jshint ignore:line

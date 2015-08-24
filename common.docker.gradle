@@ -1,0 +1,15 @@
+//common properties for 'de.gesellix.gradle.docker'
+
+//Docker plugin
+// notes for setting up docker remote api locally
+// /etc/init/docker.conf
+// /etc/default/docker
+// DOCKER_OPTS="-H tcp://0.0.0.0:2375"
+// set DOCKER_HOST 0.0.0.0:2375
+
+ext {
+    localDockerHost = "http://127.0.0.1:2375"
+    remoteDockerHost = "http://107.170.53.95"
+    registryHostname = null
+    dockerCfgFilename = new File("${System.getProperty('user.home')}/.docker", "config.json")
+}
