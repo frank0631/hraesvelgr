@@ -58,7 +58,7 @@ public class HuginnApplication implements CommandLineRunner {
       ServletRegistrationBean calculatorServletRegisteration = new ServletRegistrationBean();
       Servlet calculatorServlet = new TServlet(new TCalculatorService.Processor<CalculatorServiceHandler>(handler), protocolFactory);
       ArrayList <String> thriftUrl = new ArrayList<String>();
-      thriftUrl.add("/thrift/*");
+      thriftUrl.add("/thrift/calculator/*");
       calculatorServletRegisteration.setServlet(calculatorServlet);
       calculatorServletRegisteration.setName("calculatorServlet");
       calculatorServletRegisteration.setUrlMappings(thriftUrl);
@@ -71,7 +71,7 @@ public class HuginnApplication implements CommandLineRunner {
       ServletRegistrationBean echoServletRegisteration = new ServletRegistrationBean();
       Servlet echoServlet = new TServlet(new TEchoService.Processor<EchoServiceHandler>(handler), protocolFactory);
       ArrayList <String> thriftUrl = new ArrayList<String>();
-      thriftUrl.add("/thrift/*");
+      thriftUrl.add("/thrift/echo/*");
       echoServletRegisteration.setServlet(echoServlet);
       echoServletRegisteration.setName("echoServlet");
       echoServletRegisteration.setUrlMappings(thriftUrl);

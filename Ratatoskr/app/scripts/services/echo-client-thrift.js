@@ -7,7 +7,7 @@
  * Service in the ratastoskrApp.
  */
 angular.module( 'ratastoskrApp' ).service( 'EchoClientThrift', function ( $window, $q, ENV ) {
-	var endpoint = '/thrift/echo/';
+	var endpoint = '/thrift/echo/echo/';
 	var HugginAddress = ENV.HugginAddress+endpoint;
 	var EchoClient = ( function () {
 		var transport = new $window.Thrift.Transport( HugginAddress );
