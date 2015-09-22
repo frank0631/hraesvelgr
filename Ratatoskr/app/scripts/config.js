@@ -2,6 +2,6 @@
 
  angular.module('config', [])
 
-.constant('ENV', {HUGG_PORT:'9001',HUGG_ADDR:'localhost'})
+.constant('ENV', {HugginAddress:'http://localhost:9001'})
 
 ;

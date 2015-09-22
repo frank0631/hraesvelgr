@@ -23,59 +23,11 @@ import java.util.ArrayList;
 import javax.servlet.Servlet;
 
 @SpringBootApplication
-@EnableAutoConfiguration
-@Import(RestConfiguration.class)
 @ComponentScan
-public class HuginnApplication implements CommandLineRunner {
-
-
-    @Autowired
-    private CustomerRepository customerRepository;
+public class HuginnApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(HuginnApplication.class, args);
-    }
-
-    @Override
-    public void run(String... strings) throws Exception {
-        // save a couple of customers
-        customerRepository.save(new CustomerEntity(new Customer("Jack", "Bauer")));
-        customerRepository.save(new CustomerEntity(new Customer("Chloe", "O'Brian")));
-        customerRepository.save(new CustomerEntity(new Customer("Kim", "Bauer")));
-        customerRepository.save(new CustomerEntity(new Customer("David", "Palmer")));
-        customerRepository.save(new CustomerEntity(new Customer("Michelle", "Dessler")));
-    }
-
-    @Bean
-    public TProtocolFactory tProtocolFactory() {
-        //return new TBinaryProtocol.Factory();
-        return new TJSONProtocol.Factory();
-    }
-
-    //Calculator
-    @Bean
-    public ServletRegistrationBean calculator(TProtocolFactory protocolFactory, CalculatorServiceHandler handler) {
-      ServletRegistrationBean calculatorServletRegisteration = new ServletRegistrationBean();
-      Servlet calculatorServlet = new TServlet(new TCalculatorService.Processor<CalculatorServiceHandler>(handler), protocolFactory);
-      ArrayList <String> thriftUrl = new ArrayList<String>();
-      thriftUrl.add("/thrift/calculator/*");
-      calculatorServletRegisteration.setServlet(calculatorServlet);
-      calculatorServletRegisteration.setName("calculatorServlet");
-      calculatorServletRegisteration.setUrlMappings(thriftUrl);
-      return calculatorServletRegisteration;
-    }
-
-    //Echo
-    @Bean
-    public ServletRegistrationBean echo(TProtocolFactory protocolFactory, EchoServiceHandler handler) {
-      ServletRegistrationBean echoServletRegisteration = new ServletRegistrationBean();
-      Servlet echoServlet = new TServlet(new TEchoService.Processor<EchoServiceHandler>(handler), protocolFactory);
-      ArrayList <String> thriftUrl = new ArrayList<String>();
-      thriftUrl.add("/thrift/echo/*");
-      echoServletRegisteration.setServlet(echoServlet);
-      echoServletRegisteration.setName("echoServlet");
-      echoServletRegisteration.setUrlMappings(thriftUrl);
-      return echoServletRegisteration;
     }
 
 
